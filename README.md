@@ -37,7 +37,7 @@ sudo update-alternatives --config javac
 sudo update-alternatives --config jar
 export JAVA_HOME=/usr/lib/jvm/jdk-20
 ```
-## build project
+# Build & Run project
 ```sh
 ./mvnw package
 java -jar target/demo-0.0.1-SNAPSHOT.jar
