@@ -19,6 +19,7 @@ Fill or change variable on the application.properties
 Check if it can be connected from an external application
 
 **Build and Detach**
+
 ``` sudo docker-compose -f docker-compose-mysql.yml up --build -d ```
 
 ## install JDK
