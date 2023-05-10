@@ -6,7 +6,9 @@ import com.example.demo.models.User;
 import com.example.demo.repo.EmployeeRepo;
 import com.example.demo.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -23,13 +25,24 @@ public class ApiControllers {
         return "Welcome To REST";
     }
     @GetMapping(value = "/users")
-    public List<User> getUsers(){
-        return userRepo.findAll();
+    public List<User> getUsers() {
+        try {
+            return userRepo.findAll();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error retrieving users from database", e);
+        }
     }
     @GetMapping(value = "/employee")
     public List<Employee> getEmployee(){
-        return employeeRepo.findAll();
+        try{
+            return employeeRepo.findAll();
+        }catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error retrieving users from database", e);
+        }
+
     }
+    // Check database connection in real-time
+
 
 
     @PostMapping(value = "/save/user")
@@ -46,7 +59,10 @@ public class ApiControllers {
 
     @PutMapping(value = "update/user/{id}")
     public String updateUser(@PathVariable long id,@RequestBody User user){
-        User updatedUser = userRepo.findById(id).get();
+        User updatedUser = userRepo.findById(id).orElse(null);
+        if(updatedUser == null){
+            return "User not found...";
+        }
         updatedUser.setFirstname(user.getFirstname());
         updatedUser.setLastname(user.getLastname());
         updatedUser.setAge(user.getAge());
@@ -54,9 +70,13 @@ public class ApiControllers {
         userRepo.save(updatedUser);
         return "updated user...";
     }
+
     @PutMapping(value = "update/employee/{id}")
     public String updateEmployee(@PathVariable long id,@RequestBody Employee employee){
-        Employee updatedEmployee = employeeRepo.findById(id).get();
+        Employee updatedEmployee = employeeRepo.findById(id).orElse(null);
+        if(updatedEmployee == null){
+            return "Employee not found...";
+        }
         updatedEmployee.setName(employee.getName());
         updatedEmployee.setRole(employee.getRole());
         employeeRepo.save(updatedEmployee);
